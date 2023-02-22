@@ -1,4 +1,5 @@
 IP Range to CIDR Notations Conversion and CIDR Subset Check
+
 Welcome to the IP Range to CIDR Notations Conversion and CIDR Subset Check project! We've been hard at work converting IP ranges to CIDR notations and checking if one list of CIDR notations is a subset of another list.
 
 We started by analyzing the IP range 80.80.80.10 - 80.80.80.40, and we came up with the following CIDR notations: 80.80.80.10/31, 80.80.80.12/30, 80.80.80.16/28, 80.80.80.32/29, and 80.80.80.40/32. Then, we expanded our analysis to include the IP range 80.80.80.60 - 80.80.80.90, and we came up with even more CIDR notations: 80.80.80.60/30, 80.80.80.64/28, 80.80.80.80/29, 80.80.80.88/31, and 80.80.80.90/32. We were able to combine all the CIDR notations into a single array for easy reference.
