@@ -5,6 +5,7 @@
 
 </head>
 <body>
+  <cite>Code written with the invaluable assistance of ChatGPT</cite>
   <h1>Summary of IP Range to CIDR Notations Conversion and CIDR Subset Check Project</h1>
   <p>In this project, we worked on converting IP ranges to CIDR notations and checking if one list of CIDR notations is a subset of another list. We started by analyzing the IP range 80.80.80.10 - 80.80.80.40 and arrived at the following CIDR notations:</p>
   <pre>
