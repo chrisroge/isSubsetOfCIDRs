@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Summary of IP Range to CIDR Notations Conversion and CIDR Subset Check Project</title>
+
 </head>
 <body>
   <h1>Summary of IP Range to CIDR Notations Conversion and CIDR Subset Check Project</h1>
