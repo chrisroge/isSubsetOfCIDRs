@@ -1,65 +1,38 @@
-function compareCIDRArrays(array1, array2) {
-  // convert CIDR notation to [start, end] range
-  function cidrToRange(cidr) {
-    const [ip, mask] = cidr.split('/');
-    const ipInt = ip.split('.').reduce((acc, val) => (acc << 8) + parseInt(val), 0);
-    const maskInt = (-1 << (32 - parseInt(mask))) >>> 0;
-    const start = ipInt & maskInt;
-    const end = start + (~maskInt >>> 0);
+function isSubsetOfCIDRs(cidrList, subsetList) {
+  // Convert the list of CIDRs to IP ranges
+  var ipRangeList = cidrList.map(function(cidr) {
+    var parts = cidr.split('/');
+    var ip = parts[0];
+    var prefixLength = parseInt(parts[1]);
+    var mask = (0xffffffff << (32 - prefixLength)) >>> 0;
+    var start = (ip2long(ip) & mask) >>> 0;
+    var end = (start + (1 << (32 - prefixLength))) >>> 0;
     return [start, end];
+  });
+
+  // Check if all IPs in the subset list are contained in the IP ranges
+  return subsetList.every(function(cidr) {
+    var parts = cidr.split('/');
+    var ip = parts[0];
+    var mask = (0xffffffff << (32 - parseInt(parts[1]))) >>> 0;
+    var ipValue = ip2long(ip) >>> 0;
+    return ipRangeList.some(function(range) {
+      return (ipValue >= range[0] && ipValue < range[1]);
+    });
+  });
+
+  // Helper function to convert an IP address to a long value
+  function ip2long(ip) {
+    return ip.split('.').reduce(function(ipInt, octet) {
+      return (ipInt << 8) + parseInt(octet, 10);
+    }, 0) >>> 0;
   }
-
-  // combine adjacent ranges in array
-  function combineRanges(array) {
-    // sort ranges by start address
-    array.sort((a, b) => a[0] - b[0]);
-    const result = [array[0]];
-    for (let i = 1; i < array.length; i++) {
-      const prevRange = result[result.length - 1];
-      const currRange = array[i];
-      if (prevRange[1] + 1 >= currRange[0]) {
-        // combine adjacent ranges
-        prevRange[1] = Math.max(prevRange[1], currRange[1]);
-      } else {
-        result.push(currRange);
-      }
-    }
-    return result;
-  }
-
-  const ranges1 = combineRanges(array1.map(cidrToRange));
-  const ranges2 = combineRanges(array2.map(cidrToRange));
-
-  let i = 0;
-  let j = 0;
-
-  // loop until we reach the end of one of the arrays
-  while (i < ranges1.length && j < ranges2.length) {
-    const range1 = ranges1[i];
-    const range2 = ranges2[j];
-
-    if (range1[0] >= range2[0] && range1[1] <= range2[1]) {
-      // range1 is completely contained in range2
-      i++;
-    } else if (range2[0] >= range1[0] && range2[1] <= range1[1]) {
-      // range2 is completely contained in range1
-      j++;
-    } else if (range1[1] < range2[0]) {
-      // range1 is entirely to the left of range2
-      return false;
-    } else if (range2[1] < range1[0]) {
-      // range2 is entirely to the left of range1
-      return false;
-    } else {
-      // there is overlap but no containment
-      return false;
-    }
-  }
-
-  // if we reached the end of array1 but not array2, array1 is not a subset of array2
-  if (i === ranges1.length && j < ranges2.length) {
-    return false;
-  }
-
-  return true;
 }
+
+
+var cidrList = ["80.80.80.4/30","80.80.80.8/29","80.80.80.16/28","80.80.80.32/27","80.80.80.64/28","80.80.80.80/29","80.80.80.88/31","80.80.80.90/32"];
+var subsetList1 = ["80.80.80.20/30","80.80.80.24/30","80.80.80.28/31","80.80.80.30/32"];
+var subsetList2 = ["80.80.80.70/31","80.80.80.72/29","80.80.80.80/28","80.80.80.96/30","80.80.80.100/32"];
+
+console.log(isSubsetOfCIDRs(cidrList, subsetList1)); // should return true
+console.log(isSubsetOfCIDRs(cidrList, subsetList2)); // should return false
